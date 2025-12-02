@@ -238,13 +238,6 @@ Based on the analysis, businesses should:
 - A/B testing framework for retention strategies
 - Real-time churn prediction system deployment
 
-## 📄 License
-
-This project is available for educational and research purposes.
-
-## 👤 Author
-
-Data Science Project - Telco Customer Churn Analysis
 
 ---
 
