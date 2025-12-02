@@ -62,15 +62,24 @@ This project analyzes the WA_Fn-UseC_-Telco-Customer-Churn dataset to understand
 
 ### 1. Logistic Regression
 **Without PCA:**
-- ROC-AUC Score: ~0.8484
+- ROC-AUC Score: 0.8368
+- Accuracy: 0.79
+- Precision (Class 1): 0.61
+- Recall (Class 1): 0.56
 
 **With PCA:**
-- ROC-AUC Score: ~0.8406
+- ROC-AUC Score: 0.8263
+- Accuracy: 0.72
+- Precision (Class 1): 0.49
+- Recall (Class 1): 0.80
 - Used `class_weight='balanced'` to handle class imbalance
+- Max iterations: 1000
 
 ### 2. Random Forest Classifier
 **Basic Model:**
-- ROC-AUC Score: ~0.8250
+- ROC-AUC Score: 0.8239
+- Accuracy: 0.79
+- n_estimators: 50
 
 **Optimized Model (without PCA):**
 - n_estimators: 300
@@ -79,12 +88,25 @@ This project analyzes the WA_Fn-UseC_-Telco-Customer-Churn dataset to understand
 - min_samples_leaf: 2
 - max_features: 'sqrt'
 - class_weight: 'balanced'
-- ROC-AUC Score: ~0.8238
+- ROC-AUC Score: 0.8344
+- Accuracy: 0.78
+- Precision (Class 1): 0.58
+- Recall (Class 1): 0.63
 
-**With PCA:**
-- ROC-AUC Score: ~0.8090
+**Optimized Model (with PCA):**
+- ROC-AUC Score: 0.8098
+- Accuracy: 0.77
 
 ### 3. XGBoost Classifier
+**GridSearchCV Tuning (without PCA):**
+- Performed hyperparameter tuning with 5-fold cross-validation
+- Best parameters: learning_rate=0.1, max_depth=3-9, n_estimators=50-250
+- **ROC-AUC Score: 0.8451** (Best overall)
+- Accuracy: 0.74
+- Precision (Class 1): 0.51
+- Recall (Class 1): 0.80
+- scale_pos_weight: 2.77
+
 **Manual Tuning (without PCA):**
 - n_estimators: 300
 - max_depth: 6
@@ -93,16 +115,19 @@ This project analyzes the WA_Fn-UseC_-Telco-Customer-Churn dataset to understand
 - colsample_bytree: 0.8
 - gamma: 1
 - min_child_weight: 5
-- scale_pos_weight: ~2.87 (class imbalance ratio)
-- ROC-AUC Score: ~0.8448
+- scale_pos_weight: 2.77 (class imbalance ratio)
+- ROC-AUC Score: 0.8368
+- Accuracy: 0.76
 
 **GridSearchCV Tuning (with PCA):**
-- Performed hyperparameter tuning with 5-fold cross-validation
-- Best parameters identified through grid search
-- ROC-AUC Score: ~0.8376
+- Best parameters: learning_rate=0.1, max_depth=3, n_estimators=50
+- ROC-AUC Score: 0.8274
+- Accuracy: 0.73
+- Best Cross-Validation Score: 0.8302
 
 **Manual Tuning (with PCA):**
-- ROC-AUC Score: ~0.8363
+- ROC-AUC Score: 0.8197
+- Accuracy: 0.76
 
 ### 4. Neural Network (Deep Learning)
 **Architecture:**
@@ -121,31 +146,38 @@ This project analyzes the WA_Fn-UseC_-Telco-Customer-Churn dataset to understand
 - Validation split: 20%
 
 **Performance:**
-- ROC-AUC Score: ~0.8433
+- **ROC-AUC Score: 0.8326**
+- **Accuracy: 0.80** (Highest among all models)
+- Precision (Class 1): 0.63
+- Recall (Class 1): 0.57
+- F1-Score (Class 1): 0.60
 
 ## 📈 Key Findings
 
 ### Model Performance Summary
 
-| Model | ROC-AUC Score | Notes |
-|-------|--------------|-------|
-| Logistic Regression (No PCA) | 0.8484 | **Best overall performer** |
-| XGBoost (Manual, No PCA) | 0.8448 | Strong performance with tuning |
-| Neural Network | 0.8433 | Good deep learning baseline |
-| Logistic Regression (PCA) | 0.8406 | Slight drop with PCA |
-| XGBoost (GridSearch, PCA) | 0.8376 | Well-tuned with PCA |
-| XGBoost (Manual, PCA) | 0.8363 | Good PCA performance |
-| Random Forest (Basic) | 0.8250 | Baseline ensemble model |
-| Random Forest (Optimized) | 0.8238 | Minimal improvement with tuning |
-| Random Forest (PCA) | 0.8090 | Lower performance with PCA |
+| Model | Accuracy | ROC-AUC Score | Notes |
+|-------|----------|---------------|-------|
+| XGBoost (GridSearch, No PCA) | 0.74 | 0.8451 | **Best ROC-AUC performer** |
+| XGBoost (Manual, No PCA) | 0.76 | 0.8368 | Strong balance of metrics |
+| Logistic Regression (No PCA) | 0.79 | 0.8368 | Excellent accuracy |
+| Random Forest (Optimized, No PCA) | 0.78 | 0.8344 | Well-tuned ensemble |
+| Neural Network | 0.80 | 0.8326 | **Highest accuracy overall** |
+| XGBoost (GridSearch, PCA) | 0.73 | 0.8274 | Best PCA model |
+| Logistic Regression (PCA) | 0.72 | 0.8263 | Good with reduced features |
+| Random Forest (Basic, No PCA) | 0.79 | 0.8239 | Baseline ensemble |
+| XGBoost (Manual, PCA) | 0.76 | 0.8197 | Decent with PCA |
+| Random Forest (Optimized, PCA) | 0.77 | 0.8098 | Lower with PCA |
+| Random Forest (Basic, PCA) | 0.76 | 0.7943 | Baseline with PCA |
 
 ### Insights
 
-1. **Logistic Regression** performed best overall, suggesting linear relationships are strong in the data
-2. **PCA** slightly reduced performance for most models, indicating that original features are valuable
-3. **Class imbalance handling** (via `class_weight='balanced'` and `scale_pos_weight`) was crucial for all models
-4. **XGBoost** showed competitive performance with proper hyperparameter tuning
-5. **Neural Networks** achieved solid results, comparable to gradient boosting methods
+1. **XGBoost with GridSearchCV** achieved the best ROC-AUC score (0.8451), making it ideal for identifying churners
+2. **Neural Network** achieved the highest accuracy (0.80), showing deep learning effectiveness on tabular data
+3. **PCA** generally reduced performance, indicating original features contain important information for prediction
+4. **Class imbalance handling** (via `class_weight='balanced'` and `scale_pos_weight`) was crucial for all models
+5. **Trade-off between accuracy and ROC-AUC**: Models optimized for one metric sometimes sacrificed the other
+6. **XGBoost and Neural Networks** showed the most balanced performance across both metrics
 
 ## 🛠️ Technologies Used
 
@@ -183,11 +215,19 @@ jupyter notebook telco.ipynb
 
 Based on the analysis, businesses should:
 
-1. **Focus on high-risk customer segments** identified by the models
-2. **Implement early warning systems** using the Logistic Regression model (best ROC-AUC)
-3. **Monitor key features** that influence churn (tenure, contract type, monthly charges)
-4. **Develop targeted retention strategies** for customers predicted to churn
-5. **Consider customer lifetime value** when prioritizing retention efforts
+1. **Deploy XGBoost (GridSearchCV) for churn prediction** - Best ROC-AUC (0.8451) for identifying at-risk customers
+2. **Use Neural Network for high-accuracy scenarios** - Highest accuracy (0.80) for general predictions
+3. **Implement early warning systems** combining multiple model predictions for robust detection
+4. **Monitor key features** that influence churn:
+   - Contract type (month-to-month has highest churn)
+   - Tenure (new customers at higher risk)
+   - Internet service type (Fiber optic users show higher churn)
+   - Monthly charges and total charges
+   - Lack of online security and tech support services
+5. **Develop targeted retention strategies** for high-risk customer segments identified by models
+6. **Prioritize recall over precision** when cost of false negatives (missing churners) is high
+7. **Consider customer lifetime value** when prioritizing retention efforts
+8. **Focus on customers without dependents or partners** as they show higher churn rates
 
 ## 📝 Future Improvements
 
